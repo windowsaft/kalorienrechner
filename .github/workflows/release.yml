@@ -55,6 +55,13 @@ jobs:
           # Push the tag
           git push origin "$VERSION"
 
+      - name: Log in to the Container registry
+        uses: docker/login-action@3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Build and push Docker image
         if: "startsWith(steps.get_message.outputs.message, 'release: ')"
         uses: docker/build-push-action@v4
