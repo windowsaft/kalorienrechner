@@ -190,7 +190,7 @@
         protein: ingredientProtein,
       };
 
-      fetch('http://localhost:8000/api/ingridients', {
+      fetch('/api/ingridients', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +245,7 @@
       }
 
       // Fetch suggestions
-      fetch(`http://localhost:8000/api/ingridients?search=${encodeURIComponent(query)}`)
+      fetch(`/api/ingridients?search=${encodeURIComponent(query)}`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`Fehler: ${response.status}`);
