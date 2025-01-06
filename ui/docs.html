@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ingredient Management API User Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1, h2, h3, h4 {
+            color: #2c3e50;
+        }
+        h1 {
+            text-align: center;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        h2, h3, h4 {
+            margin-top: 20px;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 20px 0;
+        }
+        code {
+            background-color: #ecf0f1;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: "Courier New", Courier, monospace;
+        }
+        pre {
+            background-color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        ul li {
+            margin-bottom: 5px;
+        }
+        .highlight {
+            background-color: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .example-response {
+            background-color: #e8f5e9;
+            border-left: 5px solid #28a745;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .endpoint {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="ingredient-management-api-user-guide">Ingredient Management API User Guide</h1>
+    <p>Welcome to the Ingredient Management API. This guide provides details about the API endpoints, their usage, and examples.</p>
+    <hr>
+
+    <h2 id="base-url"><strong>Base URL</strong></h2>
+    <pre><code>https://calc.d-nn.is/api</code></pre>
+    <hr>
+
+    <h2 id="endpoints"><strong>Endpoints</strong></h2>
+
+    <h3 id="ingredients-management"><strong>1. Ingredients Management</strong></h3>
+
+    <h4 id="get-all-ingredients">a) Get All Ingredients</h4>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingredients</span></li>
+        <li><strong>Description:</strong> Retrieve a list of all ingredients.</li>
+        <li><strong>Query Parameters:</strong>
+            <ul>
+                <li><code>search</code> (optional): Filter ingredients by name (case-insensitive).</li>
+                <li><code>sort</code> (optional): Sort by <code>name</code>, <code>calories</code>, or <code>created_at</code> (default: <code>name</code>).</li>
+                <li><code>order</code> (optional): <code>asc</code> or <code>desc</code> (default: <code>asc</code>).</li>
+            </ul>
+        </li>
+    </ul>
+    <p><strong>Example Request:</strong></p>
+    <pre><code>GET /api/ingredients?search=apple&sort=calories&order=asc</code></pre>
+    <p><strong>Example Response:</strong></p>
+    <pre class="example-response"><code class="lang-json">[
+  { "id": 1, "name": "Apple", "calories": 52, "category": "Fruits", "created_at": "2025-01-05T12:00:00Z" },
+  { "id": 2, "name": "Green Apple", "calories": 48, "category": "Fruits", "created_at": "2025-01-05T13:00:00Z" }
+]</code></pre>
+    <hr>
+
+    <h4 id="get-single-ingredient">b) Get a Single Ingredient</h4>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingredients/:id</span></li>
+        <li><strong>Description:</strong> Retrieve details of a single ingredient by ID.</li>
+    </ul>
+    <p><strong>Example Request:</strong></p>
+    <pre><code>GET /api/ingredients/1</code></pre>
+    <p><strong>Example Response:</strong></p>
+    <pre class="example-response"><code class="lang-json">{ "id": 1, "name": "Apple", "calories": 52, "category": "Fruits", "created_at": "2025-01-05T12:00:00Z" }</code></pre>
+    <hr>
+
+    <h4 id="add-new-ingredient">c) Add a New Ingredient</h4>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">POST /api/ingredients</span></li>
+        <li><strong>Description:</strong> Add a new ingredient.</li>
+        <li><strong>Headers:</strong> <code>Content-Type: application/json</code></li>
+        <li><strong>Request Body:</strong>
+            <pre><code class="lang-json">{
+  "name": "Banana Juice",
+  "calories": 52,
+  "carbs": 3,
+  "fat": 32,
+  "protein": 654
+}</code></pre>
+        </li>
+    </ul>
+    <p><strong>Example Response:</strong></p>
+    <pre class="example-response"><code class="lang-json">{ "id": 1, "message": "Ingredient added successfully." }</code></pre>
+    <hr>
+
+    <h4 id="update-ingredient">d) Update an Ingredient</h4>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">PUT /api/ingredients/:id</span></li>
+        <li><strong>Description:</strong> Update an existing ingredient by ID.</li>
+        <li><strong>Request Body:</strong>
+            <pre><code class="lang-json">{
+  "name": "Green Apple",
+  "calories": 48,
+  "category": "Fruits"
+}</code></pre>
+        </li>
+    </ul>
+    <p><strong>Example Response:</strong></p>
+    <pre class="example-response"><code class="lang-json">{ "message": "Ingredient updated successfully." }</code></pre>
+    <hr>
+
+    <h4 id="delete-ingredient">e) Delete an Ingredient</h4>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">DELETE /api/ingredients/:id</span></li>
+        <li><strong>Description:</strong> Delete an ingredient by ID.</li>
+    </ul>
+    <p><strong>Example Response:</strong></p>
+    <pre class="example-response"><code class="lang-json">{ "message": "Ingredient deleted successfully." }</code></pre>
+    <hr>
+
+    <h3 id="bulk-operations"><strong>2. Bulk Operations</strong></h3>
+
+    <h4 id="delete-multiple-ingredients">a) Delete Multiple Ingredients</h4>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">DELETE /api/ingredients</span></li>
+        <li><strong>Description:</strong> Delete multiple ingredients by their IDs.</li>
+        <li><strong>Request Body:</strong>
+            <pre><code class="lang-json">{ "ids": [1, 2, 3] }</code></pre>
+        </li>
+    </ul>
+    <p><strong>Example Response:</strong></p>
+    <pre class="example-response"><code class="lang-json">{ "message": "3 ingredients deleted successfully." }</code></pre>
+    <hr>
+
+    <h3 id="search-feature"><strong>3. Search Feature</strong></h3>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingredients</span></li>
+        <li><strong>Query Parameter:</strong> <code>search</code>
+            <ul>
+                <li>Use this parameter to filter ingredients by their name.</li>
+            </ul>
+        </li>
+    </ul>
+    <p><strong>Example Request:</strong></p>
+    <pre><code>GET /api/ingredients?search=apple</code></pre>
+    <p><strong>Example Response:</strong></p>
+    <pre class="example-response"><code class="lang-json">[
+  { "id": 1, "name": "Apple", "calories": 52, "category": "Fruits", "created_at": "2025-01-05T12:00:00Z" },
+  { "id": 2, "name": "Green Apple", "calories": 48, "category": "Fruits", "created_at": "2025-01-05T13:00:00Z" }
+]</code></pre>
+    <hr>
+
+    <h3 id="api-health-check"><strong>4. API Health Check</strong></h3>
+    <ul>
+        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/health</span></li>
+        <li><strong>Description:</strong> Check if the API is running.</li>
+    </ul>
+    <p><strong>Example Response:</strong></p>
+    <pre class="highlight"><code class="lang-json">{ "status": "Healthy", "uptime": "3h 25m", "timestamp": "2025-01-05T12:00:00Z" }</code></pre>
+    <hr>
+
+    <h2 id="common-http-status-codes"><strong>Common HTTP Status Codes</strong></h2>
+    <ul>
+        <li><code>200 OK</code>: Request was successful.</li>
+        <li><code>201 Created</code>: Resource was successfully created.</li>
+        <li><code>400 Bad Request</code>: The request was invalid or missing parameters.</li>
+        <li><code>404 Not Found</code>: The requested resource does not exist.</li>
+        <li><code>500 Internal Server Error</code>: An error occurred on the server.</li>
+    </ul>
+</body>
+</html>

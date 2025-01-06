@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="de">
+  <style>
+    table {
+      width: 100%;
+    }
+
+    table, th, td {
+      border:1px solid black;
+    }
+
+    th {
+      background-color: #c3c3c3; /* distinct header style */
+    }
+
+    #sum-table tbody tr:hover {
+      background-color: #008080; /* Highlight row on hover */
+    }
+
+    th, td {
+      width: 20%;
+    }
+
+    #portion-weight input {
+      width: 100%;
+      box-sizing: border-box; /* Includes padding in width */
+    }
+
+    #new-ingredient-table input {
+      width: 100%;
+      box-sizing: border-box; /* Includes padding in width */
+    }
+  </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalorienrechner für Rezepte</title>
+</head>
+<body>
+  <h1>Kalorienrechner für Rezepte</h1>
+  <br>
+  <h2>Eingabe-Matrix</h2>
+  <table id="sum-table">
+    <thead>
+      <tr>
+        <th>Zutat</th>
+        <th>Gewicht (g)</th>
+        <th>Kalorien (kcal)</th>
+        <th>Kohlenhydrate (g)</th>
+        <th>Fett (g)</th>
+        <th>Protein (g)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <input 
+            type="text" 
+            placeholder="Zutat" 
+            oninput="searchIngredient(this)"
+          />
+        </td>
+        <td>
+          <input 
+            type="number" 
+            placeholder="Gewicht (g)"
+            oninput="handleWeightChange(this.closest('tr'));"
+          />
+        </td>
+        <td><input type="number" placeholder="Kalorien" oninput="calculateSums()"></td>
+        <td><input type="number" placeholder="Kohlenhydrate (g)" oninput="calculateSums()"></td>
+        <td><input type="number" placeholder="Fett (g)" oninput="calculateSums()"></td>
+        <td><input type="number" placeholder="Protein (g)" oninput="calculateSums()"></td>
+      </tr>
+      <tr>
+        <td>
+          <input 
+            type="text" 
+            placeholder="Zutat" 
+            oninput="searchIngredient(this)"
+          />
+        </td>
+        <td>
+          <input 
+            type="number" 
+            placeholder="Gewicht (g)"
+            oninput="handleWeightChange(this.closest('tr'));"
+          />
+        </td>
+        <td><input type="number" placeholder="Kalorien" oninput="calculateSums()"></td>
+        <td><input type="number" placeholder="Kohlenhydrate (g)" oninput="calculateSums()"></td>
+        <td><input type="number" placeholder="Fett (g)" oninput="calculateSums()"></td>
+        <td><input type="number" placeholder="Protein (g)" oninput="calculateSums()"></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td><strong>Summe:</strong></td>
+        <td id="total-weight">0.00</td>
+        <td id="total-calories">0.00</td>
+        <td id="total-carbs">0.00</td>
+        <td id="total-fat">0.00</td>
+        <td id="total-protein">0.00</td>
+      </tr>
+      <tr>
+        <td colspan="6" style="text-align: center;">
+          <button onclick="addRow()">Neue Zeile hinzufügen</button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+  </br>
+  <h2>Portionsrechner</h2>
+  <table id="portion-table">
+    <thead>
+      <tr>
+        <th>Gewicht (g)</th>
+        <th>Kalorien</th>
+        <th>Kohlenhydrate (g)</th>
+        <th>Fett (g)</th>
+        <th>Protein (g)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="portion-weight"><input type="number" placeholder="Gewicht (g)" oninput="calculatePortion()"></td>
+        <td id="portion-calories">0.00</td>
+        <td id="portion-carbs">0.00</td>
+        <td id="portion-fat">0.00</td>
+        <td id="portion-protein">0.00</td>
+      </tr>
+    </tbody>
+  </table>
+  <br>
+  <h2>Neue Zutat hinzufügen</h2>
+  <table id="new-ingredient-table">
+    <thead>
+      <tr>
+        <th>Zutat</th>
+        <th>Kalorien (kcal / 100g)</th>
+        <th>Kohlenhydrate (g / 100g)</th>
+        <th>Fett (g / 100g)</th>
+        <th>Protein (g / 100g)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><input type="text" id="ingredient-name" placeholder="Name der Zutat" required></td>
+        <td><input type="number" id="ingredient-calories" placeholder="Kalorien (kcal)" required></td>
+        <td><input type="number" id="ingredient-carbs" placeholder="Kohlenhydrate (g)" required></td>
+        <td><input type="number" id="ingredient-fat" placeholder="Fett (g)" required></td>
+        <td><input type="number" id="ingredient-protein" placeholder="Protein (g)" required></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5" style="text-align: center;">
+          <button id="submit-ingredient" onclick="submitIngredient()">Zutat hinzufügen</button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+  <script>
+    // --------------------------
+    //  SUBMIT NEW INGREDIENT
+    // --------------------------
+    function submitIngredient() {
+      const ingredientName = document.getElementById("ingredient-name").value;
+      const ingredientCalories = parseFloat(document.getElementById("ingredient-calories").value);
+      const ingredientCarbs = parseFloat(document.getElementById("ingredient-carbs").value);
+      const ingredientFat = parseFloat(document.getElementById("ingredient-fat").value);
+      const ingredientProtein = parseFloat(document.getElementById("ingredient-protein").value);
+
+      if (
+        !ingredientName ||
+        isNaN(ingredientCalories) ||
+        isNaN(ingredientCarbs) ||
+        isNaN(ingredientFat) ||
+        isNaN(ingredientProtein)
+      ) {
+        alert("Bitte füllen Sie alle Felder korrekt aus.");
+        return;
+      }
+
+      const newIngredient = {
+        name: ingredientName,
+        calories: ingredientCalories,
+        carbs: ingredientCarbs,
+        fat: ingredientFat,
+        protein: ingredientProtein,
+      };
+
+      fetch('http://localhost:8000/api/ingridients', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newIngredient),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Fehler: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(() => {
+          alert(`Zutat erfolgreich hinzugefügt: ${newIngredient.name}`);
+          document.getElementById("ingredient-name").value = '';
+          document.getElementById("ingredient-calories").value = '';
+          document.getElementById("ingredient-carbs").value = '';
+          document.getElementById("ingredient-fat").value = '';
+          document.getElementById("ingredient-protein").value = '';
+        })
+        .catch((error) => {
+          alert(`Fehler beim Hinzufügen der Zutat: ${error.message}`);
+        });
+    }
+
+    // --------------------------
+    //  SEARCH INGREDIENT
+    // --------------------------
+    function searchIngredient(inputField) {
+      const query = inputField.value.trim();
+
+      // If we haven't attached a datalist yet, do it
+      if (!inputField.dataset.datalistId) {
+        const datalistId = `datalist-${Date.now()}`;
+        inputField.dataset.datalistId = datalistId;
+        const datalist = document.createElement("datalist");
+        datalist.id = datalistId;
+        document.body.appendChild(datalist);
+        inputField.setAttribute("list", datalistId);
+      }
+
+      const datalistId = inputField.dataset.datalistId;
+      const datalist = document.getElementById(datalistId);
+
+      // If fewer than 2 chars, clear suggestions
+      if (query.length < 2) {
+        datalist.innerHTML = "";
+        // Also mark row as NOT server-based
+        const row = inputField.closest("tr");
+        row.removeAttribute("data-server-based");
+        return;
+      }
+
+      // Fetch suggestions
+      fetch(`http://localhost:8000/api/ingridients?search=${encodeURIComponent(query)}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Fehler: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          datalist.innerHTML = ""; // Clear old entries
+
+          data.forEach(ingredient => {
+            const option = document.createElement("option");
+            option.value = ingredient.name;
+            // Store the per-100g data
+            option.dataset.calories = ingredient.calories;
+            option.dataset.carbs = ingredient.carbs;
+            option.dataset.fat = ingredient.fat;
+            option.dataset.protein = ingredient.protein;
+            datalist.appendChild(option);
+          });
+        })
+        .catch(error => {
+          console.error("Fehler beim Abrufen der Zutaten:", error);
+        });
+
+      // On change, see if the user picked a valid option
+      inputField.addEventListener("change", () => {
+        const selectedOption = Array.from(datalist.options).find(
+          opt => opt.value === inputField.value
+        );
+
+        const row = inputField.closest("tr");
+
+        if (selectedOption) {
+          // Mark that this row uses server-based data
+          row.dataset.serverBased = "true";
+
+          // Get the input fields in that row
+          const weightInput = row.querySelector("td:nth-child(2) input");
+          const calInput = row.querySelector("td:nth-child(3) input");
+          const carbsInput = row.querySelector("td:nth-child(4) input");
+          const fatInput = row.querySelector("td:nth-child(5) input");
+          const proteinInput = row.querySelector("td:nth-child(6) input");
+
+          // Store the per-100g data in dataset
+          calInput.dataset.per100g = selectedOption.dataset.calories;
+          carbsInput.dataset.per100g = selectedOption.dataset.carbs;
+          fatInput.dataset.per100g = selectedOption.dataset.fat;
+          proteinInput.dataset.per100g = selectedOption.dataset.protein;
+
+          // Immediately calculate if there's already a weight
+          updateRowValues(row);
+        } else {
+          // The user typed something not from the list => user-based
+          row.removeAttribute("data-server-based");
+        }
+      });
+    }
+
+    // --------------------------
+    //  HANDLE WEIGHT CHANGE
+    // --------------------------
+    function handleWeightChange(row) {
+      // If the row has server-based data, update it automatically
+      if (row.dataset.serverBased === "true") {
+        updateRowValues(row);
+      }
+      // After row update, recalc totals (either way)
+      calculateSums();
+    }
+
+    // --------------------------
+    //  UPDATE ROW VALUES (if server-based)
+    // --------------------------
+    function updateRowValues(row) {
+      const weightInput = row.querySelector("td:nth-child(2) input");
+      const calInput = row.querySelector("td:nth-child(3) input");
+      const carbsInput = row.querySelector("td:nth-child(4) input");
+      const fatInput = row.querySelector("td:nth-child(5) input");
+      const proteinInput = row.querySelector("td:nth-child(6) input");
+
+      const weight = parseFloat(weightInput.value) || 0;
+
+      // If the row does not have server-based data, do nothing special
+      if (row.dataset.serverBased !== "true") {
+        return;
+      }
+
+      // Otherwise, recalc from the "per100g" data
+      const calPer100 = parseFloat(calInput.dataset.per100g) || 0;
+      const carbsPer100 = parseFloat(carbsInput.dataset.per100g) || 0;
+      const fatPer100 = parseFloat(fatInput.dataset.per100g) || 0;
+      const protPer100 = parseFloat(proteinInput.dataset.per100g) || 0;
+
+      const absCal = (calPer100 * weight) / 100;
+      const absCarbs = (carbsPer100 * weight) / 100;
+      const absFat = (fatPer100 * weight) / 100;
+      const absProt = (protPer100 * weight) / 100;
+
+      // Overwrite the fields with the calculated values
+      calInput.value = absCal.toFixed(2);
+      carbsInput.value = absCarbs.toFixed(2);
+      fatInput.value = absFat.toFixed(2);
+      proteinInput.value = absProt.toFixed(2);
+    }
+
+    // --------------------------
+    //  CALCULATE SUMS
+    // --------------------------
+    function calculateSums() {
+      const table = document.getElementById("sum-table");
+      const rows = table.querySelectorAll("tbody tr");
+      let totalWeight = 0;
+      let totalCalories = 0;
+      let totalCarbs = 0;
+      let totalFat = 0;
+      let totalProtein = 0;
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll("td input");
+        const weightVal = parseFloat(cells[1].value) || 0;
+        const calVal = parseFloat(cells[2].value) || 0;
+        const carbsVal = parseFloat(cells[3].value) || 0;
+        const fatVal = parseFloat(cells[4].value) || 0;
+        const protVal = parseFloat(cells[5].value) || 0;
+
+        totalWeight += weightVal;
+        totalCalories += calVal;
+        totalCarbs += carbsVal;
+        totalFat += fatVal;
+        totalProtein += protVal;
+      });
+
+      document.getElementById("total-weight").textContent = totalWeight.toFixed(2);
+      document.getElementById("total-calories").textContent = totalCalories.toFixed(2);
+      document.getElementById("total-carbs").textContent = totalCarbs.toFixed(2);
+      document.getElementById("total-fat").textContent = totalFat.toFixed(2);
+      document.getElementById("total-protein").textContent = totalProtein.toFixed(2);
+    }
+
+    // --------------------------
+    //  ADD NEW ROW
+    // --------------------------
+    function addRow() {
+      const table = document.getElementById("sum-table");
+      const tbody = table.querySelector("tbody");
+      const newRow = document.createElement("tr");
+
+      newRow.innerHTML = `
+        <td>
+          <input 
+            type="text" 
+            placeholder="Zutat" 
+            oninput="searchIngredient(this)"
+          />
+        </td>
+        <td>
+          <input 
+            type="number" 
+            placeholder="Gewicht (g)"
+            oninput="handleWeightChange(this.closest('tr'));"
+          />
+        </td>
+        <td><input type="number" placeholder="Kalorien" /></td>
+        <td><input type="number" placeholder="Kohlenhydrate (g)" /></td>
+        <td><input type="number" placeholder="Fett (g)" /></td>
+        <td><input type="number" placeholder="Protein (g)" /></td>
+      `;
+      tbody.appendChild(newRow);
+    }
+
+    // ----------------------------------------------------
+    //  PORTION CALCULATON BASED ON THE PORTION WEIGHT
+    // ----------------------------------------------------
+    function calculatePortion() {
+      // Collect all sums
+      const ids = ["total-weight", "total-calories", "total-carbs", "total-fat", "total-protein"];
+      const totalMap = {}
+      ids.forEach(id => {
+        const numAsText = document.getElementById(id).textContent
+        totalMap[id] = parseFloat(numAsText)
+      });
+
+      // Collect portion weight
+      const portionWeightAsText = document.getElementById("portion-weight").querySelector("input").value;
+      const portionWeight = parseFloat(portionWeightAsText);
+
+      // Calculate portion values
+      const portionCalories = portionWeight / totalMap["total-weight"] * totalMap["total-calories"];
+      const portionCarbs = portionWeight / totalMap["total-weight"] * totalMap["total-carbs"];
+      const portionFat = portionWeight / totalMap["total-weight"] * totalMap["total-fat"];
+      const portionProtein = portionWeight / totalMap["total-weight"] * totalMap["total-protein"];
+
+      // Update the portion row
+      document.getElementById("portion-calories").textContent = portionCalories.toFixed(2);
+      document.getElementById("portion-carbs").textContent = portionCarbs.toFixed(2);
+      document.getElementById("portion-fat").textContent = portionFat.toFixed(2);
+      document.getElementById("portion-protein").textContent = portionProtein.toFixed(2);
+    }
+  </script>
+</body>
+</html>
