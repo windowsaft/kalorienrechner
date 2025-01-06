@@ -84,7 +84,7 @@ export async function upsertIngridient(ingridient: Ingridient) : Promise<string>
     logger.debug("Generated new UUID for ingredient", { id: ingridient.id });
   }
 
-  // Set the id as primary key
+  // Set the ID as primary key
   const key = ["ingridients", ingridient.id];
 
   try {
