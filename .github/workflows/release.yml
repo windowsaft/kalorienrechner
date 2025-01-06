@@ -23,7 +23,7 @@ jobs:
         id: get_message
         run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
-      - name: Check if commit starts with 'release: '
+      - name: Check if commit starts with 'release:' 
         if: "!startsWith( steps.get_message.outputs.message, 'release: ' )"
         run: |
           echo "Commit message does not start with 'release: '. Skipping."
