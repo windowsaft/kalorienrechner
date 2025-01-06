@@ -1,0 +1,74 @@
+name: Release Docker image on "release:" commit
+
+on:
+  push:
+    branches: [ master ]
+    # Only run if commit message starts with `release:`
+    # We'll do a manual check in a step as well
+    paths-ignore:
+      - 'README.md'
+      - '.github/**'
+
+jobs:
+  release-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Extract commit message
+        id: get_message
+        run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
+
+      - name: Check if commit starts with 'release: '
+        if: "!startsWith( steps.get_message.outputs.message, 'release: ' )"
+        run: |
+          echo "Commit message does not start with 'release: '. Skipping."
+          exit 0
+
+      - name: Read version from deno.json
+        id: get_version
+        run: |
+          VERSION=$(cat deno.json | jq -r .version)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create and push Git tag
+        id: tag_version
+        run: |
+          VERSION_TAG="v${{ steps.get_version.outputs.version }}"
+          echo "Tagging commit with $VERSION_TAG"
+          
+          # Create the version tag
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git tag "$VERSION_TAG"
+          
+          # Push the tag
+          git push origin "$VERSION_TAG"
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ghcr.io/OWNER/REPO:${{ steps.get_version.outputs.version }}
+            ghcr.io/OWNER/REPO:latest
+          load: false  # We don't need to load it locally, only push
+
+      # Optional: Create a GitHub Release for the version tag
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          release_name: v${{ steps.get_version.outputs.version }}
+          body: |
+            Release for version ${{ steps.get_version.outputs.version }}.
+            Automatically created from commit:
+            ${{ steps.get_message.outputs.message }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
