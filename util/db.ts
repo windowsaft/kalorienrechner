@@ -11,7 +11,7 @@ if (DENO_KV_URL) {
 
   if (!DENO_KV_ACCESS_TOKEN) {
     logger.error("No ACCESS_TOKEN found in the environment, but DENO_KV_URL is set.");
-    logger.error("FATAL: Missing ACCESS_TOKEN for remote Deno KV usage. Exiting...");
+    logger.error("FATAL - Missing ACCESS_TOKEN for remote Deno KV usage. Exiting...");
     Deno.exit(1);
   } else {
     logger.info("ACCESS_TOKEN found. Proceeding with remote KV usage.");
