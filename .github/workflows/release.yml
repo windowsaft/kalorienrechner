@@ -37,17 +37,19 @@ jobs:
 
       - name: Create and push Git tag
         id: tag_version
+        shell: bash
+        env:
+          VERSION: v${{ steps.get_version.outputs.version }}
         run: |
-          VERSION_TAG="v${{ steps.get_version.outputs.version }}"
           echo "Tagging commit with $VERSION_TAG"
           
           # Create the version tag
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git tag "$VERSION_TAG"
+          git tag "$VERSION" $GITHUB_SHA
           
           # Push the tag
-          git push origin "$VERSION_TAG"
+          git push origin "$VERSION"
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
