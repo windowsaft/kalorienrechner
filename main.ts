@@ -22,6 +22,7 @@ logger.info("Starting server...", { IS_DEV, CORS_ORIGIN, PORT });
 const router = new Router();
 
 router
+
   // Get all ingridients or a filtered subset
   .get("/api/ingridients", async (ctx) => {
     // Format query params
