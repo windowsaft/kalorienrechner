@@ -1,0 +1,6 @@
+*.log
+*.md
+*.lock
+.git
+.env
+LICENSE
