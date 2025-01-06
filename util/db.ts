@@ -37,7 +37,7 @@ try {
   kv = await Deno.openKv(DENO_KV_URL);
   logger.info("Deno KV connection established successfully.");
 } catch (error) {
-  logger.error("FATAL: Failed to open Deno KV instance. Exiting...", error);
+  logger.error("FATAL - Failed to open Deno KV instance. Exiting...", error);
   Deno.exit(1);
 }
 
