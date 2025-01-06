@@ -19,39 +19,38 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - name: Extract commit message
+      - name: Get Last Commit Message
         id: get_message
+        shell: bash
         run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
-      - name: Check if commit starts with 'release:' 
-        if: "!startsWith( steps.get_message.outputs.message, 'release: ' )"
-        run: |
-          echo "Commit message does not start with 'release: '. Skipping."
-          exit 0
-
-      - name: Read version from deno.json
+      - name: Read Version from deno.json
+        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
         id: get_version
         run: |
           VERSION=$(cat deno.json | jq -r .version)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Create and push Git tag
+      - name: Tag the Commit
+        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
         id: tag_version
         shell: bash
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: v${{ steps.get_version.outputs.version }}
         run: |
-          echo "Tagging commit with $VERSION_TAG"
+          echo "Tagging commit with $VERSION"
           
           # Create the version tag
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git tag "$VERSION" $GITHUB_SHA
+          git tag $VERSION $GITHUB_SHA
           
           # Push the tag
           git push origin "$VERSION"
 
       - name: Build and push Docker image
+        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -62,15 +61,14 @@ jobs:
             ghcr.io/OWNER/REPO:latest
           load: false  # We don't need to load it locally, only push
 
-      # Optional: Create a GitHub Release for the version tag
       - name: Create GitHub Release
-        uses: actions/create-release@v1
+        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: v${{ steps.get_version.outputs.version }}
-          release_name: v${{ steps.get_version.outputs.version }}
-          body: |
-            Release for version ${{ steps.get_version.outputs.version }}.
-            Automatically created from commit:
-            ${{ steps.get_message.outputs.message }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v${{ steps.get_version.outputs.version }}
+          name: 🎉 New Version ${{ steps.get_version.outputs.version }} Released!
+          body: "Release of version v${{ steps.get_version.outputs.version }}"
+          draft: false
+          prerelease: false
+          #artifacts:
