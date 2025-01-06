@@ -15,6 +15,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -25,14 +27,14 @@ jobs:
         run: echo "message=$(git log -1 --pretty=%B)" >> $GITHUB_OUTPUT
 
       - name: Read Version from deno.json
-        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+        if: "startsWith(steps.get_message.outputs.message, 'release: ')"
         id: get_version
         run: |
           VERSION=$(cat deno.json | jq -r .version)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Tag the Commit
-        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+        if: "startsWith(steps.get_message.outputs.message, 'release: ')"
         id: tag_version
         shell: bash
         env:
@@ -50,7 +52,7 @@ jobs:
           git push origin "$VERSION"
 
       - name: Build and push Docker image
-        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+        if: "startsWith(steps.get_message.outputs.message, 'release: ')"
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -62,7 +64,7 @@ jobs:
           load: false  # We don't need to load it locally, only push
 
       - name: Create GitHub Release
-        if: "startsWith(steps.get_commit_message.outputs.message, 'release: ')"
+        if: "startsWith(steps.get_message.outputs.message, 'release: ')"
         uses: ncipollo/release-action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
