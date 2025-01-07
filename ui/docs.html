@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ingredient Management API User Guide</title>
+    <title>Ingridient Management API User Guide</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,8 +69,8 @@
     </style>
 </head>
 <body>
-    <h1 id="ingredient-management-api-user-guide">Ingredient Management API User Guide</h1>
-    <p>Welcome to the Ingredient Management API. This guide provides details about the API endpoints, their usage, and examples.</p>
+    <h1 id="ingridient-management-api-user-guide">Ingridient Management API User Guide</h1>
+    <p>Welcome to the Ingridient Management API. This guide provides details about the API endpoints, their usage, and examples.</p>
     <hr>
 
     <h2 id="base-url"><strong>Base URL</strong></h2>
@@ -79,44 +79,44 @@
 
     <h2 id="endpoints"><strong>Endpoints</strong></h2>
 
-    <h3 id="ingredients-management"><strong>1. Ingredients Management</strong></h3>
+    <h3 id="ingridients-management"><strong>1. Ingridients Management</strong></h3>
 
-    <h4 id="get-all-ingredients">a) Get All Ingredients</h4>
+    <h4 id="get-all-ingridients">a) Get All Ingridients</h4>
     <ul>
-        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingredients</span></li>
-        <li><strong>Description:</strong> Retrieve a list of all ingredients.</li>
+        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingridients</span></li>
+        <li><strong>Description:</strong> Retrieve a list of all ingridients.</li>
         <li><strong>Query Parameters:</strong>
             <ul>
-                <li><code>search</code> (optional): Filter ingredients by name (case-insensitive).</li>
-                <li><code>sort</code> (optional): Sort by <code>name</code>, <code>calories</code>, or <code>created_at</code> (default: <code>name</code>).</li>
+                <li><code>search</code> (optional): Filter ingridients by name (case-insensitive).</li>
+                <li><code>sort</code> (optional): Sort by <code>name</code>, <code>calories</code>, <code>carbs</code>, <code>fat</code>, <code>protein</code> or <code>created_at</code> (default: <code>name</code>).</li>
                 <li><code>order</code> (optional): <code>asc</code> or <code>desc</code> (default: <code>asc</code>).</li>
             </ul>
         </li>
     </ul>
     <p><strong>Example Request:</strong></p>
-    <pre><code>GET /api/ingredients?search=apple&sort=calories&order=asc</code></pre>
+    <pre><code>GET /api/ingridients?search=apple&sort=calories&order=asc</code></pre>
     <p><strong>Example Response:</strong></p>
     <pre class="example-response"><code class="lang-json">[
-  { "id": 1, "name": "Apple", "calories": 52, "category": "Fruits", "created_at": "2025-01-05T12:00:00Z" },
-  { "id": 2, "name": "Green Apple", "calories": 48, "category": "Fruits", "created_at": "2025-01-05T13:00:00Z" }
+  { "id": "3e9fc60f-475d-4b3c-bcc7-56bc84094d14", "name": "Apple", "calories": 52, , "carbs": 12, "fat": 0, "protein": 0, "created_at": "1735689600" },
+  { "id": "3e9ff60f-475d-4e3c-bcc7-56bc84494d14", "name": "Green Apple", "calories": 48, , "carbs": 14, "fat": 0, "protein": 0, "created_at": "1704067200" }
 ]</code></pre>
     <hr>
 
-    <h4 id="get-single-ingredient">b) Get a Single Ingredient</h4>
+    <h4 id="get-single-ingridient">b) Get a Single Ingridient</h4>
     <ul>
-        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingredients/:id</span></li>
-        <li><strong>Description:</strong> Retrieve details of a single ingredient by ID.</li>
+        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingridients/:id</span></li>
+        <li><strong>Description:</strong> Retrieve details of a single ingridient by ID.</li>
     </ul>
     <p><strong>Example Request:</strong></p>
-    <pre><code>GET /api/ingredients/1</code></pre>
+    <pre><code>GET /api/ingridients/3e9fc60f-475d-4b3c-bcc7-56bc84094d14</code></pre>
     <p><strong>Example Response:</strong></p>
-    <pre class="example-response"><code class="lang-json">{ "id": 1, "name": "Apple", "calories": 52, "category": "Fruits", "created_at": "2025-01-05T12:00:00Z" }</code></pre>
+    <pre class="example-response"><code class="lang-json">{ "id": "3e9fc60f-475d-4b3c-bcc7-56bc84094d14", "name": "Apple", "calories": 52, , "carbs": 12, "fat": 0, "protein": 0, "created_at": "1735689600" },</code></pre>
     <hr>
 
-    <h4 id="add-new-ingredient">c) Add a New Ingredient</h4>
+    <h4 id="add-new-ingridient">c) Add a New Ingridient</h4>
     <ul>
-        <li><strong>Endpoint:</strong> <span class="endpoint">POST /api/ingredients</span></li>
-        <li><strong>Description:</strong> Add a new ingredient.</li>
+        <li><strong>Endpoint:</strong> <span class="endpoint">POST /api/ingridients</span></li>
+        <li><strong>Description:</strong> Add a new ingridient.</li>
         <li><strong>Headers:</strong> <code>Content-Type: application/json</code></li>
         <li><strong>Request Body:</strong>
             <pre><code class="lang-json">{
@@ -129,13 +129,13 @@
         </li>
     </ul>
     <p><strong>Example Response:</strong></p>
-    <pre class="example-response"><code class="lang-json">{ "id": 1, "message": "Ingredient added successfully." }</code></pre>
+    <pre class="example-response"><code class="lang-json">{ "id": 1, "message": "Ingridient added successfully." }</code></pre>
     <hr>
 
-    <h4 id="update-ingredient">d) Update an Ingredient</h4>
+    <h4 id="update-ingridient">d) Update an Ingridient</h4>
     <ul>
-        <li><strong>Endpoint:</strong> <span class="endpoint">PUT /api/ingredients/:id</span></li>
-        <li><strong>Description:</strong> Update an existing ingredient by ID.</li>
+        <li><strong>Endpoint:</strong> <span class="endpoint">PUT /api/ingridients/:id</span></li>
+        <li><strong>Description:</strong> Update an existing ingridient by ID.</li>
         <li><strong>Request Body:</strong>
             <pre><code class="lang-json">{
   "name": "Green Apple",
@@ -145,47 +145,47 @@
         </li>
     </ul>
     <p><strong>Example Response:</strong></p>
-    <pre class="example-response"><code class="lang-json">{ "message": "Ingredient updated successfully." }</code></pre>
+    <pre class="example-response"><code class="lang-json">{ "message": "Ingridient updated successfully." }</code></pre>
     <hr>
 
-    <h4 id="delete-ingredient">e) Delete an Ingredient</h4>
+    <h4 id="delete-ingridient">e) Delete an Ingridient</h4>
     <ul>
-        <li><strong>Endpoint:</strong> <span class="endpoint">DELETE /api/ingredients/:id</span></li>
-        <li><strong>Description:</strong> Delete an ingredient by ID.</li>
+        <li><strong>Endpoint:</strong> <span class="endpoint">DELETE /api/ingridients/:id</span></li>
+        <li><strong>Description:</strong> Delete an ingridient by ID.</li>
     </ul>
     <p><strong>Example Response:</strong></p>
-    <pre class="example-response"><code class="lang-json">{ "message": "Ingredient deleted successfully." }</code></pre>
+    <pre class="example-response"><code class="lang-json">{ "message": "Ingridient deleted successfully." }</code></pre>
     <hr>
 
     <h3 id="bulk-operations"><strong>2. Bulk Operations</strong></h3>
 
-    <h4 id="delete-multiple-ingredients">a) Delete Multiple Ingredients</h4>
+    <h4 id="delete-multiple-ingridients">a) Delete Multiple Ingridients</h4>
     <ul>
-        <li><strong>Endpoint:</strong> <span class="endpoint">DELETE /api/ingredients</span></li>
-        <li><strong>Description:</strong> Delete multiple ingredients by their IDs.</li>
+        <li><strong>Endpoint:</strong> <span class="endpoint">DELETE /api/ingridients</span></li>
+        <li><strong>Description:</strong> Delete multiple ingridients by their IDs.</li>
         <li><strong>Request Body:</strong>
-            <pre><code class="lang-json">{ "ids": [1, 2, 3] }</code></pre>
+            <pre><code class="lang-json">{ "ids": ["3e9fc60f-475d-4b3c-bcc7-56bc84094d14", "3e9ff60f-475d-4e3c-bcc7-56bc84494d14"] }</code></pre>
         </li>
     </ul>
     <p><strong>Example Response:</strong></p>
-    <pre class="example-response"><code class="lang-json">{ "message": "3 ingredients deleted successfully." }</code></pre>
+    <pre class="example-response"><code class="lang-json">{ "message": "3 ingridients deleted successfully." }</code></pre>
     <hr>
 
     <h3 id="search-feature"><strong>3. Search Feature</strong></h3>
     <ul>
-        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingredients</span></li>
+        <li><strong>Endpoint:</strong> <span class="endpoint">GET /api/ingridients</span></li>
         <li><strong>Query Parameter:</strong> <code>search</code>
             <ul>
-                <li>Use this parameter to filter ingredients by their name.</li>
+                <li>Use this parameter to filter ingridients by their name.</li>
             </ul>
         </li>
     </ul>
     <p><strong>Example Request:</strong></p>
-    <pre><code>GET /api/ingredients?search=apple</code></pre>
+    <pre><code>GET /api/ingridients?search=apple</code></pre>
     <p><strong>Example Response:</strong></p>
     <pre class="example-response"><code class="lang-json">[
-  { "id": 1, "name": "Apple", "calories": 52, "category": "Fruits", "created_at": "2025-01-05T12:00:00Z" },
-  { "id": 2, "name": "Green Apple", "calories": 48, "category": "Fruits", "created_at": "2025-01-05T13:00:00Z" }
+        { "id": "3e9fc60f-475d-4b3c-bcc7-56bc84094d14", "name": "Apple", "calories": 52, , "carbs": 12, "fat": 0, "protein": 0, "created_at": "1735689600" },
+        { "id": "3e9ff60f-475d-4e3c-bcc7-56bc84494d14", "name": "Green Apple", "calories": 48, , "carbs": 14, "fat": 0, "protein": 0, "created_at": "1704067200" }
 ]</code></pre>
     <hr>
 
@@ -195,7 +195,7 @@
         <li><strong>Description:</strong> Check if the API is running.</li>
     </ul>
     <p><strong>Example Response:</strong></p>
-    <pre class="highlight"><code class="lang-json">{ "status": "Healthy", "uptime": "3h 25m", "timestamp": "2025-01-05T12:00:00Z" }</code></pre>
+    <pre class="highlight"><code class="lang-json">{ "status": "Healthy", "uptime": "3h 25m", "timestamp": "1704067333" }</code></pre>
     <hr>
 
     <h2 id="common-http-status-codes"><strong>Common HTTP Status Codes</strong></h2>
